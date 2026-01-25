@@ -3,11 +3,12 @@
 
   let name = $state("");
   let greetMsg = $state("");
+  let notesMsg = $state("");  
 
-  async function greet(event: Event) {
+  async function saveNotes(event: Event) {
     event.preventDefault();
     // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    greetMsg = await invoke("greet", { name });
+    notesMsg = await invoke("save_notes", { name });
   }
 </script>
 
@@ -32,6 +33,10 @@
     <button type="submit">Greet</button>
   </form>
   <p>{greetMsg}</p>
+  <form action="save_notes" method="post">
+    <input type="text" name="title" />
+    <button type="submit">Save Notes</button> 
+  </form>
 </main>
 
 <style>
