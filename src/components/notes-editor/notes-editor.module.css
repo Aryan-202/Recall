@@ -1,0 +1,52 @@
+.editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 2rem;
+  gap: 1.5rem;
+}
+
+.titleInput {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-primary);
+  font-size: 2.5rem;
+  font-weight: 700;
+  outline: none;
+  padding: 0.5rem 0;
+  transition: border-color 0.2s;
+}
+
+.titleInput:focus {
+  border-bottom-color: var(--border-color);
+}
+
+.titleInput::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.5;
+}
+
+.textArea {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1.125rem;
+  line-height: 1.6;
+  outline: none;
+  resize: none;
+  font-family: inherit;
+}
+
+.textArea::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.5;
+}
+
+.meta {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  display: flex;
+  justify-content: flex-end;
+}

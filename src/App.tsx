@@ -1,51 +1,71 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
+import { useState, useEffect } from "react";
 import "./App.css";
+import Sidebar from "./components/sidebar/Sidebar";
+import NotesEditor from "./components/notes-editor/NotesEditor";
 
-function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+export interface Note {
+  id: string;
+  title: string;
+  content: string;
+  updatedAt: number;
+}
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
-  }
+export default function App() {
+  const [notes, setNotes] = useState<Note[]>(() => {
+    const saved = localStorage.getItem("tauri-notes");
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [activeNoteId, setActiveNoteId] = useState<string | null>(null);
+
+  useEffect(() => {
+    localStorage.setItem("tauri-notes", JSON.stringify(notes));
+  }, [notes]);
+
+  const activeNote = notes.find((note) => note.id === activeNoteId);
+
+  const createNote = () => {
+    const newNote: Note = {
+      id: crypto.randomUUID(),
+      title: "Untitled Note",
+      content: "",
+      updatedAt: Date.now(),
+    };
+    setNotes([newNote, ...notes]);
+    setActiveNoteId(newNote.id);
+  };
+
+  const updateNote = (updatedNote: Note) => {
+    setNotes(
+      notes.map((note) => (note.id === updatedNote.id ? updatedNote : note))
+    );
+  };
+
+  const deleteNote = (id: string) => {
+    setNotes(notes.filter((note) => note.id !== id));
+    if (activeNoteId === id) {
+      setActiveNoteId(null);
+    }
+  };
 
   return (
     <main className="container">
-      <h1>Welcome to Tauri + React</h1>
-
-      <div className="row">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <Sidebar
+        notes={notes}
+        activeNoteId={activeNoteId}
+        setActiveNoteId={setActiveNoteId}
+        createNote={createNote}
+        deleteNote={deleteNote}
+      />
+      <div className="editor-container">
+        {activeNote ? (
+          <NotesEditor note={activeNote} onUpdate={updateNote} />
+        ) : (
+          <div className="empty-state">
+            <h1>Select a note to view</h1>
+            <p>Choose a note from the sidebar or create a new one to get started.</p>
+          </div>
+        )}
       </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
     </main>
   );
 }
-
-export default App;
