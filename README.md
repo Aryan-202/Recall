@@ -29,8 +29,8 @@ Recall is a modern, high-performance, and distraction-free note-taking applicati
 
 ### Installation
 
-    git clone https://github.com/Aryan-202/tauri-notes.git
-    cd tauri-notes
+    git clone https://github.com/Aryan-202/Recall.git
+    cd Recall
 
 
 3.  Run the application in development mode:
