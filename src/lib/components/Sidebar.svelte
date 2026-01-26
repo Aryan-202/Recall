@@ -6,7 +6,6 @@
     performSearch,
     searchQuery,
   } from "../store";
-  import type { Note } from "../types";
 
   let timer: any;
   function handleSearch(e: Event) {
