@@ -29,27 +29,14 @@ Recall is a modern, high-performance, and distraction-free note-taking applicati
 
 ### Installation
 
-1.  Clone the repository:
+    git clone https://github.com/Aryan-202/tauri-notes.git
+    cd tauri-notes
 
-    ```bash
-    git clone https://github.com/yourusername/recall.git
-    cd recall
-    ```
-
-2.  Install frontend dependencies:
-
-    ```bash
-    npm install
-    # or
-    bun install
-    ```
 
 3.  Run the application in development mode:
-    ```bash
-    npm run tauri dev
-    # or
+
     bun tauri dev
-    ```
+
 
 ## 📂 Project Structure
 
