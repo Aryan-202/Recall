@@ -1,20 +1,24 @@
 <script lang="ts">
-import { invoke } from "@tauri-apps/api/core";
-import { onMount } from "svelte";
+  import { onMount } from "svelte";
+  import Sidebar from "$lib/components/Sidebar.svelte";
+  import Editor from "$lib/components/Editor.svelte";
+  import { loadNotes, loadTags } from "$lib/store";
 
-let message = "";
-onMount(()=>{
-  invoke("greet", {name: "Recall"}).then((res)=>{
-    message = res as string
-  })
-})
+  onMount(async () => {
+    await Promise.all([loadNotes(), loadTags()]);
+  });
 </script>
 
-<main>
-hello 
-{message}
-</main>
+<div class="app-layout">
+  <Sidebar />
+  <Editor />
+</div>
 
 <style>
-
+  .app-layout {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
 </style>
