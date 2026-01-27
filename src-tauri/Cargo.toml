@@ -25,3 +25,4 @@ serde_json = "1"
 rusqlite = { version = "0.31", features = ["bundled", "chrono"] }
 uuid = { version = "1.8", features = ["v4", "serde"] }
 chrono = { version = "0.4", features = ["serde"] }
+tauri-plugin-sql = { version = "2", features = ["postgres"] }
