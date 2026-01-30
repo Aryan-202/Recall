@@ -10,7 +10,4 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
 
-# personal
-.vscode/
-
-.idea/
+.vscode
