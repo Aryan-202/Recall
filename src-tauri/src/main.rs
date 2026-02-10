@@ -11,7 +11,7 @@ mod utils;
 
 use commands::*;
 use database::init_db;
-use tauri::Manager;
+use tauri::{Manager, generate_context};
 use tracing::info;
 
 #[tokio::main]
@@ -80,6 +80,6 @@ async fn main() {
         ])
         .menu(menu::build_menu)
         .on_menu_event(menu::handle_menu_event)
-        .run(tauri::generate_context!())
+        .run(generate_context!())
         .expect("error while running tauri application");
 }
