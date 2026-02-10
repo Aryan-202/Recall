@@ -23,14 +23,14 @@ pub struct NoteWithRelations {
     pub tags: Vec<TagInfo>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, FromRow)]
 pub struct FolderInfo {
     pub folder_id: i32,
     pub name: String,
     pub color: Option<String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, FromRow)]
 pub struct TagInfo {
     pub tag_id: i32,
     pub name: String,

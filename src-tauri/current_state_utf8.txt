@@ -1,0 +1,320 @@
+﻿cargo : warning: unused 
+import: `AppError`
+At line:1 char:1
++ cargo check > 
+current_state.txt 2>&1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~
+    + CategoryInfo          
+    : NotSpecified: (warni  
+  ng: unused import: `App   
+ Error`:String) [], Remo    
+teException
+    + FullyQualifiedErrorId 
+    : NativeCommandError
+ 
+ --> src\database\repository
+\notes_repository.rs:2:27
+  |
+2 | use crate::utils::error:
+:{AppError, Result};
+  |                         
+  ^^^^^^^^
+  |
+  = note: 
+`#[warn(unused_imports)]` 
+(part of `#[warn(unused)]`) 
+on by default
+
+warning: unused import: 
+`AppError`
+ --> src\database\repository
+\tags_repository.rs:3:27
+  |
+3 | use crate::utils::error:
+:{AppError, Result};
+  |                         
+  ^^^^^^^^
+
+warning: unused import: 
+`AppError`
+ --> src\database\repository
+\users_repository.rs:2:27
+  |
+2 | use crate::utils::error:
+:{AppError, Result};
+  |                         
+  ^^^^^^^^
+
+warning: unused import: 
+`AppError`
+ --> src\database\repository
+\attachments_repository.rs:2
+:27
+  |
+2 | use crate::utils::error:
+:{AppError, Result};
+  |                         
+  ^^^^^^^^
+
+warning: unused import: 
+`std::fmt`
+ --> src\utils\error.rs:2:5
+  |
+2 | use std::fmt;
+  |     ^^^^^^^^
+
+warning: unused import: 
+`TimeZone`
+ --> 
+src\utils\helpers.rs:1:29
+  |
+1 | use chrono::{DateTime, 
+Utc, TimeZone, Local};
+  |                         
+    ^^^^^^^^
+
+warning: unused variable: 
+`user_id`
+   --> 
+src\commands\notes.rs:130:9
+    |
+130 |     let user_id = 1; 
+// TODO: Get from auth
+    |         ^^^^^^^ help: 
+if this is intentional, 
+prefix it with an 
+underscore: `_user_id`
+    |
+    = note: 
+`#[warn(unused_variables)]` 
+(part of `#[warn(unused)]`) 
+on by default
+
+warning: unused variable: 
+`user_id`
+   --> 
+src\commands\notes.rs:154:9
+    |
+154 |     let user_id = 1; 
+// TODO: Get from auth
+    |         ^^^^^^^ help: 
+if this is intentional, 
+prefix it with an 
+underscore: `_user_id`
+
+warning: `recall` (lib) 
+generated 8 warnings (run 
+`cargo fix --lib -p recall` 
+to apply 8 suggestions)
+    Checking recall v0.1.0 (
+D:\projects\recall\src-tauri
+)
+error: proc macro panicked
+  --> src\main.rs:83:14
+   |
+83 |         .run(tauri::gen
+erate_context!())
+   |              
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: message: The 
+`frontendDist` 
+configuration is set to 
+`"../build"` but this path 
+doesn't exist
+
+warning: unused import: 
+`settings::*`
+ --> src\config\mod.rs:3:9
+  |
+3 | pub use settings::*;
+  |         ^^^^^^^^^^^
+  |
+  = note: 
+`#[warn(unused_imports)]` 
+(part of `#[warn(unused)]`) 
+on by default
+
+warning: unused import: 
+`note::*`
+ --> src\database\models\mod
+.rs:7:9
+  |
+7 | pub use note::*;
+  |         ^^^^^^^
+
+warning: unused import: 
+`folder::*`
+ --> src\database\models\mod
+.rs:8:9
+  |
+8 | pub use folder::*;
+  |         ^^^^^^^^^
+
+warning: unused import: 
+`tag::*`
+ --> src\database\models\mod
+.rs:9:9
+  |
+9 | pub use tag::*;
+  |         ^^^^^^
+
+warning: unused import: 
+`user::*`
+  --> src\database\models\mo
+d.rs:10:9
+   |
+10 | pub use user::*;
+   |         ^^^^^^^
+
+warning: unused import: 
+`attachment::*`
+  --> src\database\models\mo
+d.rs:11:9
+   |
+11 | pub use attachment::*;
+   |         ^^^^^^^^^^^^^
+
+warning: unused import: 
+`AppError`
+ --> src\database\repository
+\notes_repository.rs:2:27
+  |
+2 | use crate::utils::error:
+:{AppError, Result};
+  |                         
+  ^^^^^^^^
+
+warning: unused import: 
+`notes_repository::*`
+ --> src\database\repository
+\mod.rs:7:9
+  |
+7 | pub use 
+notes_repository::*;
+  |         
+^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: 
+`folders_repository::*`
+ --> src\database\repository
+\mod.rs:8:9
+  |
+8 | pub use 
+folders_repository::*;
+  |         
+^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: 
+`tags_repository::*`
+ --> src\database\repository
+\mod.rs:9:9
+  |
+9 | pub use 
+tags_repository::*;
+  |         
+^^^^^^^^^^^^^^^^^^
+
+warning: unused import: 
+`users_repository::*`
+  --> src\database\repositor
+y\mod.rs:10:9
+   |
+10 | pub use 
+users_repository::*;
+   |         
+^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: 
+`attachments_repository::*`
+  --> src\database\repositor
+y\mod.rs:11:9
+   |
+11 | pub use 
+attachments_repository::*;
+   |         
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: 
+`connection::*`
+ --> src\database\mod.rs:6:9
+  |
+6 | pub use connection::*;
+  |         ^^^^^^^^^^^^^
+
+warning: unused import: 
+`models::*`
+ --> src\database\mod.rs:7:9
+  |
+7 | pub use models::*;
+  |         ^^^^^^^^^
+
+warning: unused import: 
+`builder::*`
+ --> src\menu\mod.rs:3:9
+  |
+3 | pub use builder::*;
+  |         ^^^^^^^^^^
+
+warning: unused import: 
+`error::*`
+ --> src\utils\mod.rs:5:9
+  |
+5 | pub use error::*;
+  |         ^^^^^^^^
+
+warning: unused import: 
+`validation::*`
+ --> src\utils\mod.rs:6:9
+  |
+6 | pub use validation::*;
+  |         ^^^^^^^^^^^^^
+
+warning: unused import: 
+`helpers::*`
+ --> src\utils\mod.rs:7:9
+  |
+7 | pub use helpers::*;
+  |         ^^^^^^^^^^
+
+warning: unused import: 
+`tauri::Manager`
+  --> src\main.rs:14:5
+   |
+14 | use tauri::Manager;
+   |     ^^^^^^^^^^^^^^
+
+error[E0599]: no method 
+named `get_window` found 
+for mutable reference `&mut 
+tauri::App` in the current 
+scope
+  --> src\main.rs:38:35
+   |
+38 |             let 
+main_window = app.get_window
+("main").unwrap();
+   |                        
+           ^^^^^^^^^^
+   |
+help: there is a method 
+`get_webview_window` with a 
+similar name
+   |
+38 |             let 
+main_window = app.get_webvie
+w_window("main").unwrap();
+   |                        
+                ++++++++
+
+For more information about 
+this error, try `rustc 
+--explain E0599`.
+warning: `recall` (bin 
+"recall") generated 26 
+warnings (7 duplicates)
+error: could not compile 
+`recall` (bin "recall") due 
+to 2 previous errors; 26 
+warnings emitted

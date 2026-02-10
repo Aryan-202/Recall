@@ -1,0 +1,506 @@
+﻿cargo :     Checking recall 
+v0.1.0 (D:\projects\recall\s
+rc-tauri)
+At line:1 char:1
++ cargo check > 
+check_output.txt 2>&1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~
+    + CategoryInfo          
+    : NotSpecified: (    C  
+  hecking re...call\src-t   
+ auri):String) [], Remot    
+eException
+    + FullyQualifiedErrorId 
+    : NativeCommandError
+ 
+error[E0432]: unresolved 
+imports 
+`tauri::CustomMenuItem`, 
+`tauri::Menu`, 
+`tauri::MenuItem`, 
+`tauri::Submenu`
+ --> 
+src\menu\builder.rs:1:13
+  |
+1 | use 
+tauri::{CustomMenuItem, 
+Menu, MenuItem, Submenu};
+  |             
+^^^^^^^^^^^^^^  ^^^^  
+^^^^^^^^  ^^^^^^^ no 
+`Submenu` in the root
+  |             |           
+    |     |
+  |             |           
+    |     no `MenuItem` in 
+the root
+  |             |           
+    no `Menu` in the root
+  |             |           
+    help: a similar name 
+exists in the module: `menu`
+  |             no 
+`CustomMenuItem` in the root
+  |
+  = help: consider 
+importing one of these 
+items instead:
+          tauri::Error::Menu
+          tauri::menu::Menu
+          
+tauri::window::Effect::Menu
+  = help: consider 
+importing one of these 
+items instead:
+          
+tauri::menu::MenuItem
+          tauri::menu::MenuI
+temKind::MenuItem
+  = help: consider 
+importing one of these 
+items instead:
+          tauri::menu::MenuI
+temKind::Submenu
+          
+tauri::menu::Submenu
+
+error[E0432]: unresolved 
+imports 
+`tauri::CustomMenuItem`, 
+`tauri::Menu`, 
+`tauri::MenuItem`, 
+`tauri::Submenu`, 
+`tauri::WindowMenuEvent`
+ --> src\menu\mod.rs:5:13
+  |
+5 | use 
+tauri::{CustomMenuItem, 
+Menu, MenuItem, Submenu, 
+WindowMenuEvent};
+  |             
+^^^^^^^^^^^^^^  ^^^^  
+^^^^^^^^  ^^^^^^^  
+^^^^^^^^^^^^^^^ no 
+`WindowMenuEvent` in the 
+root
+  |             |           
+    |     |         |
+  |             |           
+    |     |         no 
+`Submenu` in the root
+  |             |           
+    |     no `MenuItem` in 
+the root
+  |             |           
+    no `Menu` in the root
+  |             no 
+`CustomMenuItem` in the root
+  |
+  = help: consider 
+importing one of these 
+items instead:
+          tauri::Error::Menu
+          tauri::menu::Menu
+          
+tauri::window::Effect::Menu
+  = help: consider 
+importing one of these 
+items instead:
+          
+tauri::menu::MenuItem
+          tauri::menu::MenuI
+temKind::MenuItem
+  = help: consider 
+importing one of these 
+items instead:
+          tauri::menu::MenuI
+temKind::Submenu
+          
+tauri::menu::Submenu
+help: a similar name exists 
+in the module
+  |
+5 - use 
+tauri::{CustomMenuItem, 
+Menu, MenuItem, Submenu, 
+WindowMenuEvent};
+5 + use 
+tauri::{CustomMenuItem, 
+menu, MenuItem, Submenu, 
+WindowMenuEvent};
+  |
+help: a similar name exists 
+in the module
+  |
+5 - use 
+tauri::{CustomMenuItem, 
+Menu, MenuItem, Submenu, 
+WindowMenuEvent};
+5 + use 
+tauri::{CustomMenuItem, 
+Menu, MenuItem, Submenu, 
+WindowEvent};
+  |
+
+error[E0603]: struct import 
+`NoteWithRelations` is 
+private
+  --> 
+src\commands\notes.rs:2:36
+   |
+ 2 |     CreateNoteDto, 
+NoteRepository, 
+NoteWithRelations, 
+UpdateNoteDto,
+   |                        
+            
+^^^^^^^^^^^^^^^^^ private 
+struct import
+   |
+note: the struct import 
+`NoteWithRelations` is 
+defined here...
+  --> src\database\repositor
+y\notes_repository.rs:1:40
+   |
+ 1 | use super::super::model
+s::note::{Note, 
+NoteWithRelations, 
+FolderInfo, TagInfo};
+   |                        
+                
+^^^^^^^^^^^^^^^^^
+note: ...and refers to the 
+struct `NoteWithRelations` 
+which is defined here
+  --> src\database\models\no
+te.rs:20:1
+   |
+20 | pub struct 
+NoteWithRelations {
+   | ^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^ you could import this 
+directly
+help: import 
+`NoteWithRelations` directly
+   |
+ 2 |     CreateNoteDto, 
+NoteRepository, database::mo
+dels::note::NoteWithRelation
+s, UpdateNoteDto,
+   |                        
+            
+++++++++++++++++++++++++
+
+error[E0603]: struct import 
+`FolderWithChildren` is 
+private
+  --> 
+src\commands\folders.rs:2:23
+   |
+ 2 |     FolderRepository, 
+FolderWithChildren, 
+CreateFolderDto, 
+UpdateFolderDto
+   |                       
+^^^^^^^^^^^^^^^^^^ private 
+struct import
+   |
+note: the struct import 
+`FolderWithChildren` is 
+defined here...
+  --> src\database\repositor
+y\folders_repository.rs:1:44
+   |
+ 1 | use super::super::model
+s::folder::{Folder, 
+FolderWithChildren};
+   |                        
+                    
+^^^^^^^^^^^^^^^^^^
+note: ...and refers to the 
+struct `FolderWithChildren` 
+which is defined here
+  --> src\database\models\fo
+lder.rs:17:1
+   |
+17 | pub struct 
+FolderWithChildren {
+   | ^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^ you could import 
+this directly
+help: import 
+`FolderWithChildren` 
+directly
+   |
+ 2 |     FolderRepository, d
+atabase::models::folder::Fol
+derWithChildren, 
+CreateFolderDto, 
+UpdateFolderDto
+   |                       
+++++++++++++++++++++++++++
+
+error[E0603]: struct import 
+`TagWithNotes` is private
+  --> 
+src\commands\tags.rs:2:20
+   |
+ 2 |     TagRepository, 
+TagWithNotes, CreateTagDto, 
+UpdateTagDto
+   |                    
+^^^^^^^^^^^^ private struct 
+import
+   |
+note: the struct import 
+`TagWithNotes` is defined 
+here...
+  --> src\database\repositor
+y\tags_repository.rs:1:38
+   |
+ 1 | use super::super::model
+s::tag::{Tag, TagWithNotes};
+   |                        
+              ^^^^^^^^^^^^
+note: ...and refers to the 
+struct `TagWithNotes` which 
+is defined here
+  --> src\database\models\ta
+g.rs:15:1
+   |
+15 | pub struct 
+TagWithNotes {
+   | 
+^^^^^^^^^^^^^^^^^^^^^^^ you 
+could import this directly
+help: import `TagWithNotes` 
+directly
+   |
+ 2 |     TagRepository, data
+base::models::tag::TagWithNo
+tes, CreateTagDto, 
+UpdateTagDto
+   |                    
++++++++++++++++++++++++
+
+warning: unused import: 
+`Manager`
+ --> src\commands\attachment
+s.rs:4:20
+  |
+4 | use tauri::{State, 
+Manager};
+  |                    
+^^^^^^^
+  |
+  = note: 
+`#[warn(unused_imports)]` 
+(part of `#[warn(unused)]`) 
+on by default
+
+warning: unused import: 
+`AppError`
+ --> src\database\repository
+\notes_repository.rs:2:27
+  |
+2 | use crate::utils::error:
+:{AppError, Result};
+  |                         
+  ^^^^^^^^
+
+warning: unused import: 
+`AppError`
+ --> src\database\repository
+\tags_repository.rs:3:27
+  |
+3 | use crate::utils::error:
+:{AppError, Result};
+  |                         
+  ^^^^^^^^
+
+warning: unused import: 
+`AppError`
+ --> src\database\repository
+\users_repository.rs:2:27
+  |
+2 | use crate::utils::error:
+:{AppError, Result};
+  |                         
+  ^^^^^^^^
+
+warning: unused import: 
+`AppError`
+ --> src\database\repository
+\attachments_repository.rs:2
+:27
+  |
+2 | use crate::utils::error:
+:{AppError, Result};
+  |                         
+  ^^^^^^^^
+
+warning: unused import: 
+`std::fmt`
+ --> src\utils\error.rs:2:5
+  |
+2 | use std::fmt;
+  |     ^^^^^^^^
+
+warning: unused import: 
+`TimeZone`
+ --> 
+src\utils\helpers.rs:1:29
+  |
+1 | use chrono::{DateTime, 
+Utc, TimeZone, Local};
+  |                         
+    ^^^^^^^^
+
+error[E0599]: no method 
+named `emit_all` found for 
+reference `&AppHandle` in 
+the current scope
+  --> src\menu\mod.rs:77:25
+   |
+77 |             let _ = app
+.emit_all("menu:new-note", 
+"");
+   |                        
+ ^^^^^^^^
+   |
+help: there is a method 
+`emit` with a similar name
+   |
+77 -             let _ = app
+.emit_all("menu:new-note", 
+"");
+77 +             let _ = 
+app.emit("menu:new-note", 
+"");
+   |
+
+error[E0599]: no method 
+named `emit_all` found for 
+reference `&AppHandle` in 
+the current scope
+  --> src\menu\mod.rs:81:25
+   |
+81 |             let _ = app
+.emit_all("menu:new-folder",
+ "");
+   |                        
+ ^^^^^^^^
+   |
+help: there is a method 
+`emit` with a similar name
+   |
+81 -             let _ = app
+.emit_all("menu:new-folder",
+ "");
+81 +             let _ = 
+app.emit("menu:new-folder", 
+"");
+   |
+
+warning: unused variable: 
+`user_id`
+   --> 
+src\commands\notes.rs:131:9
+    |
+131 |     let user_id = 1; 
+// TODO: Get from auth
+    |         ^^^^^^^ help: 
+if this is intentional, 
+prefix it with an 
+underscore: `_user_id`
+    |
+    = note: 
+`#[warn(unused_variables)]` 
+(part of `#[warn(unused)]`) 
+on by default
+
+warning: unused variable: 
+`user_id`
+   --> 
+src\commands\notes.rs:155:9
+    |
+155 |     let user_id = 1; 
+// TODO: Get from auth
+    |         ^^^^^^^ help: 
+if this is intentional, 
+prefix it with an 
+underscore: `_user_id`
+
+error[E0733]: recursion in 
+an async fn requires boxing
+   --> src\database\reposito
+ry\folders_repository.rs:191
+:5
+    |
+191 |     async fn get_folde
+r_with_children(&self, 
+folder_id: i32) -> 
+Result<FolderWithChildren> {
+    |     ^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^
+...
+208 |             let 
+child_tree = self.get_folder
+_with_children(child.folder_
+id).await?;
+    |                       
+       ---------------------
+----------------------------
+--- recursive call here
+    |
+    = note: a recursive 
+`async fn` call must 
+introduce indirection such 
+as `Box::pin` to avoid an 
+infinitely sized future
+
+error[E0733]: recursion in 
+an async fn requires boxing
+   --> src\database\reposito
+ry\folders_repository.rs:163
+:5
+    |
+163 |     async fn 
+build_folder_tree(&self, 
+parent: &Folder) -> 
+Result<FolderWithChildren> {
+    |     ^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^
+...
+173 |             let 
+child_tree = self.build_fold
+er_tree(&child).await?;
+    |                       
+       ---------------------
+--------------- recursive 
+call here
+    |
+    = note: a recursive 
+`async fn` call must 
+introduce indirection such 
+as `Box::pin` to avoid an 
+infinitely sized future
+
+Some errors have detailed 
+explanations: E0432, E0599, 
+E0603, E0733.
+For more information about 
+an error, try `rustc 
+--explain E0432`.
+warning: `recall` (lib) 
+generated 9 warnings
+error: could not compile 
+`recall` (lib) due to 9 
+previous errors; 9 warnings 
+emitted

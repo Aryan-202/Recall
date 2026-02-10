@@ -1,91 +1,80 @@
-use chrono::{DateTime, Utc, TimeZone, Local};
-use std::path::Path;
+use chrono::{DateTime, Local, Utc};
 
+#[allow(dead_code)]
 pub fn format_date(date: DateTime<Utc>) -> String {
-    let local_date: DateTime<Local> = date.into();
-    local_date.format("%Y-%m-%d %H:%M:%S").to_string()
+    date.with_timezone(&Local)
+        .format("%Y-%m-%d %H:%M:%S")
+        .to_string()
 }
 
+#[allow(dead_code)]
 pub fn format_date_relative(date: DateTime<Utc>) -> String {
     let now = Utc::now();
-    let duration = now - date;
-    
+    let duration = now.signed_duration_since(date);
+
     if duration.num_seconds() < 60 {
-        "just now".to_string()
+        return "just now".to_string();
     } else if duration.num_minutes() < 60 {
-        format!("{} minutes ago", duration.num_minutes())
+        return format!("{}m ago", duration.num_minutes());
     } else if duration.num_hours() < 24 {
-        format!("{} hours ago", duration.num_hours())
+        return format!("{}h ago", duration.num_hours());
     } else if duration.num_days() < 7 {
-        format!("{} days ago", duration.num_days())
-    } else {
-        format_date(date)
+        return format!("{}d ago", duration.num_days());
     }
+
+    date.format("%b %d, %Y").to_string()
 }
 
+#[allow(dead_code)]
 pub fn generate_slug(text: &str) -> String {
     text.to_lowercase()
         .chars()
-        .map(|c| if c.is_alphanumeric() { c } else { '-' })
+        .filter(|c| c.is_alphanumeric() || c.is_whitespace())
         .collect::<String>()
-        .trim_matches('-')
-        .to_string()
-        .replace("--", "-")
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join("-")
 }
 
+#[allow(dead_code)]
 pub fn sanitize_filename(filename: &str) -> String {
     filename
         .chars()
-        .map(|c| match c {
-            '/' | '\\' | ':' | '*' | '?' | '"' | '<' | '>' | '|' => '_',
-            _ => c,
-        })
+        .filter(|c| c.is_alphanumeric() || matches!(c, '.' | '_' | '-'))
         .collect()
 }
 
+#[allow(dead_code)]
 pub fn get_file_extension(filename: &str) -> Option<String> {
-    Path::new(filename)
+    std::path::Path::new(filename)
         .extension()
-        .and_then(|ext| ext.to_str())
-        .map(|s| s.to_lowercase())
+        .map(|ext| ext.to_string_lossy().to_string().to_lowercase())
 }
 
+#[allow(dead_code)]
 pub fn is_image_file(filename: &str) -> bool {
-    if let Some(ext) = get_file_extension(filename) {
-        matches!(
-            ext.as_str(),
-            "jpg" | "jpeg" | "png" | "gif" | "bmp" | "webp" | "svg"
-        )
-    } else {
-        false
-    }
+    let ext = get_file_extension(filename).unwrap_or_default();
+    matches!(
+        ext.as_str(),
+        "jpg" | "jpeg" | "png" | "gif" | "webp" | "svg"
+    )
 }
 
+#[allow(dead_code)]
 pub fn is_document_file(filename: &str) -> bool {
-    if let Some(ext) = get_file_extension(filename) {
-        matches!(
-            ext.as_str(),
-            "pdf" | "doc" | "docx" | "txt" | "rtf" | "md" | "odt"
-        )
-    } else {
-        false
-    }
+    let ext = get_file_extension(filename).unwrap_or_default();
+    matches!(ext.as_str(), "pdf" | "doc" | "docx" | "txt" | "md" | "rtf")
 }
 
+#[allow(dead_code)]
 pub fn truncate_text(text: &str, max_length: usize) -> String {
     if text.len() <= max_length {
-        text.to_string()
-    } else {
-        let truncated = &text[..max_length - 3];
-        format!("{}...", truncated)
+        return text.to_string();
     }
+    format!("{}...", &text[..max_length])
 }
 
+#[allow(dead_code)]
 pub fn extract_first_paragraph(text: &str) -> String {
-    text.split("\n\n")
-        .next()
-        .unwrap_or("")
-        .chars()
-        .take(200)
-        .collect()
+    text.split("\n\n").next().unwrap_or("").to_string()
 }

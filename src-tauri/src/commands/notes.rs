@@ -1,6 +1,5 @@
-use crate::database::repository::notes_repository::{
-    NoteRepository, NoteWithRelations, CreateNoteDto, UpdateNoteDto
-};
+use crate::database::models::note::NoteWithRelations;
+use crate::database::repository::notes_repository::{CreateNoteDto, NoteRepository, UpdateNoteDto};
 use crate::utils::error::{AppError, Result};
 use serde::{Deserialize, Serialize};
 use tauri::State;
@@ -37,7 +36,7 @@ pub async fn create_note(
         folder_id: request.folder_id,
         is_pinned: request.is_pinned,
     };
-    
+
     let note = repository.create_note(dto, &request.tags).await?;
     Ok(note)
 }
@@ -47,7 +46,9 @@ pub async fn get_note(
     note_id: i32,
     repository: State<'_, NoteRepository>,
 ) -> Result<NoteWithRelations> {
-    let note = repository.get_note_by_id(note_id).await?
+    let note = repository
+        .get_note_by_id(note_id)
+        .await?
         .ok_or_else(|| AppError::NotFound("Note not found".to_string()))?;
     Ok(note)
 }
@@ -74,16 +75,13 @@ pub async fn update_note(
         is_pinned: request.is_pinned,
         is_archived: request.is_archived,
     };
-    
+
     let note = repository.update_note(dto, request.tags).await?;
     Ok(note)
 }
 
 #[tauri::command]
-pub async fn delete_note(
-    note_id: i32,
-    repository: State<'_, NoteRepository>,
-) -> Result<bool> {
+pub async fn delete_note(note_id: i32, repository: State<'_, NoteRepository>) -> Result<bool> {
     let user_id = 1; // TODO: Get from auth
     repository.soft_delete_note(note_id, user_id).await?;
     Ok(true)
@@ -128,20 +126,17 @@ pub async fn get_archived_notes(
 }
 
 #[tauri::command]
-pub async fn toggle_note_pin(
-    note_id: i32,
-    repository: State<'_, NoteRepository>,
-) -> Result<bool> {
-    let user_id = 1; // TODO: Get from auth
+pub async fn toggle_note_pin(note_id: i32, repository: State<'_, NoteRepository>) -> Result<bool> {
+    let _user_id = 1; // TODO: Get from auth
     let current = repository.get_note_by_id(note_id).await?;
-    
+
     if let Some(note) = current {
         let dto = UpdateNoteDto {
             note_id,
             title: None,
             content: None,
             folder_id: None,
-            is_pinned: Some(!note.is_pinned),
+            is_pinned: Some(!note.note.is_pinned),
             is_archived: None,
         };
         repository.update_note(dto, None).await?;
@@ -156,9 +151,9 @@ pub async fn toggle_note_archive(
     note_id: i32,
     repository: State<'_, NoteRepository>,
 ) -> Result<bool> {
-    let user_id = 1; // TODO: Get from auth
+    let _user_id = 1; // TODO: Get from auth
     let current = repository.get_note_by_id(note_id).await?;
-    
+
     if let Some(note) = current {
         let dto = UpdateNoteDto {
             note_id,
@@ -166,7 +161,7 @@ pub async fn toggle_note_archive(
             content: None,
             folder_id: None,
             is_pinned: None,
-            is_archived: Some(!note.is_archived),
+            is_archived: Some(!note.note.is_archived),
         };
         repository.update_note(dto, None).await?;
         Ok(true)

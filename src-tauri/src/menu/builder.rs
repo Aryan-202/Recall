@@ -1,56 +1,117 @@
-use tauri::{CustomMenuItem, Menu, MenuItem, Submenu};
+use tauri::menu::{Menu, MenuItem, PredefinedMenuItem, Submenu};
+use tauri::{AppHandle, Runtime};
 
-pub struct MenuBuilder {
-    menu: Menu,
+#[allow(dead_code)]
+pub struct MenuBuilder<R: Runtime> {
+    app: AppHandle<R>,
+    items: Vec<tauri::menu::MenuItemKind<R>>,
 }
 
-impl MenuBuilder {
-    pub fn new() -> Self {
+impl<R: Runtime> MenuBuilder<R> {
+    #[allow(dead_code)]
+    pub fn new(app: AppHandle<R>) -> Self {
         Self {
-            menu: Menu::new(),
+            app,
+            items: Vec::new(),
         }
     }
-    
-    pub fn add_file_menu(mut self) -> Self {
-        let file_menu = Menu::new()
-            .add_item(CustomMenuItem::new("new_note", "New Note").accelerator("CmdOrCtrl+N"))
-            .add_item(CustomMenuItem::new("new_folder", "New Folder").accelerator("CmdOrCtrl+Shift+N"))
-            .add_separator()
-            .add_item(CustomMenuItem::new("save", "Save").accelerator("CmdOrCtrl+S"))
-            .add_separator()
-            .add_item(CustomMenuItem::new("quit", "Quit").accelerator("CmdOrCtrl+Q"));
-        
-        self.menu = self.menu.add_submenu(Submenu::new("File", file_menu));
-        self
+
+    #[allow(dead_code)]
+    pub fn add_file_menu(mut self) -> tauri::Result<Self> {
+        let file_menu = Submenu::with_items(
+            &self.app,
+            "File",
+            true,
+            &[
+                &MenuItem::with_id(&self.app, "new_note", "New Note", true, Some("CmdOrCtrl+N"))?,
+                &MenuItem::with_id(
+                    &self.app,
+                    "new_folder",
+                    "New Folder",
+                    true,
+                    Some("CmdOrCtrl+Shift+N"),
+                )?,
+                &PredefinedMenuItem::separator(&self.app)?,
+                &MenuItem::with_id(&self.app, "save", "Save", true, Some("CmdOrCtrl+S"))?,
+                &PredefinedMenuItem::separator(&self.app)?,
+                &MenuItem::with_id(&self.app, "quit", "Quit", true, Some("CmdOrCtrl+Q"))?,
+            ],
+        )?;
+
+        self.items
+            .push(tauri::menu::MenuItemKind::Submenu(file_menu));
+        Ok(self)
     }
-    
-    pub fn add_edit_menu(mut self) -> Self {
-        let edit_menu = Menu::new()
-            .add_item(CustomMenuItem::new("undo", "Undo").accelerator("CmdOrCtrl+Z"))
-            .add_item(CustomMenuItem::new("redo", "Redo").accelerator("CmdOrCtrl+Shift+Z"))
-            .add_separator()
-            .add_item(CustomMenuItem::new("cut", "Cut").accelerator("CmdOrCtrl+X"))
-            .add_item(CustomMenuItem::new("copy", "Copy").accelerator("CmdOrCtrl+C"))
-            .add_item(CustomMenuItem::new("paste", "Paste").accelerator("CmdOrCtrl+V"))
-            .add_item(CustomMenuItem::new("select_all", "Select All").accelerator("CmdOrCtrl+A"));
-        
-        self.menu = self.menu.add_submenu(Submenu::new("Edit", edit_menu));
-        self
+
+    #[allow(dead_code)]
+    pub fn add_edit_menu(mut self) -> tauri::Result<Self> {
+        let edit_menu = Submenu::with_items(
+            &self.app,
+            "Edit",
+            true,
+            &[
+                &MenuItem::with_id(&self.app, "undo", "Undo", true, Some("CmdOrCtrl+Z"))?,
+                &MenuItem::with_id(&self.app, "redo", "Redo", true, Some("CmdOrCtrl+Shift+Z"))?,
+                &PredefinedMenuItem::separator(&self.app)?,
+                &MenuItem::with_id(&self.app, "cut", "Cut", true, Some("CmdOrCtrl+X"))?,
+                &MenuItem::with_id(&self.app, "copy", "Copy", true, Some("CmdOrCtrl+C"))?,
+                &MenuItem::with_id(&self.app, "paste", "Paste", true, Some("CmdOrCtrl+V"))?,
+                &MenuItem::with_id(
+                    &self.app,
+                    "select_all",
+                    "Select All",
+                    true,
+                    Some("CmdOrCtrl+A"),
+                )?,
+            ],
+        )?;
+
+        self.items
+            .push(tauri::menu::MenuItemKind::Submenu(edit_menu));
+        Ok(self)
     }
-    
-    pub fn add_notes_menu(mut self) -> Self {
-        let notes_menu = Menu::new()
-            .add_item(CustomMenuItem::new("pin_note", "Pin Note").accelerator("CmdOrCtrl+P"))
-            .add_item(CustomMenuItem::new("archive_note", "Archive Note").accelerator("CmdOrCtrl+Shift+A"))
-            .add_item(CustomMenuItem::new("delete_note", "Delete Note").accelerator("Delete"))
-            .add_separator()
-            .add_item(CustomMenuItem::new("add_tag", "Add Tag").accelerator("CmdOrCtrl+T"));
-        
-        self.menu = self.menu.add_submenu(Submenu::new("Notes", notes_menu));
-        self
+
+    #[allow(dead_code)]
+    pub fn add_notes_menu(mut self) -> tauri::Result<Self> {
+        let notes_menu = Submenu::with_items(
+            &self.app,
+            "Notes",
+            true,
+            &[
+                &MenuItem::with_id(&self.app, "pin_note", "Pin Note", true, Some("CmdOrCtrl+P"))?,
+                &MenuItem::with_id(
+                    &self.app,
+                    "archive_note",
+                    "Archive Note",
+                    true,
+                    Some("CmdOrCtrl+Shift+A"),
+                )?,
+                &MenuItem::with_id(
+                    &self.app,
+                    "delete_note",
+                    "Delete Note",
+                    true,
+                    Some("Delete"),
+                )?,
+                &PredefinedMenuItem::separator(&self.app)?,
+                &MenuItem::with_id(&self.app, "add_tag", "Add Tag", true, Some("CmdOrCtrl+T"))?,
+            ],
+        )?;
+
+        self.items
+            .push(tauri::menu::MenuItemKind::Submenu(notes_menu));
+        Ok(self)
     }
-    
-    pub fn build(self) -> Menu {
-        self.menu
+
+    #[allow(dead_code)]
+    pub fn build(self) -> tauri::Result<Menu<R>> {
+        Menu::with_items(
+            &self.app,
+            &self
+                .items
+                .iter()
+                .map(|i| i as &dyn tauri::menu::IsMenuItem<R>)
+                .collect::<Vec<_>>(),
+        )
     }
 }

@@ -1,5 +1,6 @@
+use crate::database::models::folder::FolderWithChildren;
 use crate::database::repository::folders_repository::{
-    FolderRepository, FolderWithChildren, CreateFolderDto, UpdateFolderDto
+    CreateFolderDto, FolderRepository, UpdateFolderDto,
 };
 use crate::utils::error::{AppError, Result};
 use serde::{Deserialize, Serialize};
@@ -31,7 +32,7 @@ pub async fn create_folder(
         parent_folder_id: request.parent_folder_id,
         color: request.color,
     };
-    
+
     let folder = repository.create_folder(dto).await?;
     Ok(folder)
 }
@@ -41,7 +42,9 @@ pub async fn get_folder(
     folder_id: i32,
     repository: State<'_, FolderRepository>,
 ) -> Result<FolderWithChildren> {
-    let folder = repository.get_folder_by_id(folder_id).await?
+    let folder = repository
+        .get_folder_by_id(folder_id)
+        .await?
         .ok_or_else(|| AppError::NotFound("Folder not found".to_string()))?;
     Ok(folder)
 }
@@ -66,7 +69,7 @@ pub async fn update_folder(
         parent_folder_id: request.parent_folder_id,
         color: request.color,
     };
-    
+
     let folder = repository.update_folder(dto).await?;
     Ok(folder)
 }

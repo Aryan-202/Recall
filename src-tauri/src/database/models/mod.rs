@@ -1,11 +1,16 @@
-pub mod note;
+pub mod attachment;
 pub mod folder;
+pub mod note;
 pub mod tag;
 pub mod user;
-pub mod attachment;
 
-pub use note::*;
-pub use folder::*;
-pub use tag::*;
-pub use user::*;
+#[allow(unused_imports)]
 pub use attachment::*;
+#[allow(unused_imports)]
+pub use folder::*;
+#[allow(unused_imports)]
+pub use note::*;
+#[allow(unused_imports)]
+pub use tag::*;
+#[allow(unused_imports)]
+pub use user::*;

@@ -4,10 +4,10 @@
 )]
 
 mod commands;
-mod database;
-mod utils;
 mod config;
+mod database;
 mod menu;
+mod utils;
 
 use commands::*;
 use database::init_db;
@@ -25,19 +25,19 @@ async fn main() {
 
     tauri::Builder::default()
         .setup(|app| {
-            let handle = app.handle();
-            
+            let _handle = app.handle();
+
             // Initialize database
             tokio::spawn(async move {
                 if let Err(e) = init_db().await {
                     eprintln!("Failed to initialize database: {}", e);
                 }
             });
-            
+
             // Set window title
-            let main_window = app.get_window("main").unwrap();
+            let main_window = app.get_webview_window("main").unwrap();
             main_window.set_title("Recall - Notes App").unwrap();
-            
+
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -53,7 +53,6 @@ async fn main() {
             get_archived_notes,
             toggle_note_pin,
             toggle_note_archive,
-            
             // Folders commands
             create_folder,
             get_folder,
@@ -61,7 +60,6 @@ async fn main() {
             update_folder,
             delete_folder,
             get_folder_tree,
-            
             // Tags commands
             create_tag,
             get_tag,
@@ -71,21 +69,17 @@ async fn main() {
             assign_tag_to_note,
             remove_tag_from_note,
             get_notes_by_tag,
-            
             // User commands
             get_current_user,
             update_user_profile,
             change_password,
-            
             // File operations
             upload_attachment,
             delete_attachment,
             get_note_attachments,
         ])
-        .menu(menu::build_menu())
-        .on_menu_event(|app, event| {
-            menu::handle_menu_event(app, event);
-        })
+        .menu(menu::build_menu)
+        .on_menu_event(menu::handle_menu_event)
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

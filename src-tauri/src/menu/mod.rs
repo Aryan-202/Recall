@@ -1,84 +1,156 @@
 pub mod builder;
 
+#[allow(unused_imports)]
 pub use builder::*;
 
-use tauri::{CustomMenuItem, Menu, MenuItem, Submenu, WindowMenuEvent};
+use tauri::menu::{Menu, MenuEvent, MenuItem, PredefinedMenuItem, Submenu};
+use tauri::{AppHandle, Emitter, Runtime};
 
-pub fn build_menu() -> Menu {
-    Menu::new()
-        .add_submenu(Submenu::new(
-            "File",
-            Menu::new()
-                .add_item(CustomMenuItem::new("new_note", "New Note").accelerator("CmdOrCtrl+N"))
-                .add_item(CustomMenuItem::new("new_folder", "New Folder").accelerator("CmdOrCtrl+Shift+N"))
-                .add_separator()
-                .add_item(CustomMenuItem::new("save", "Save").accelerator("CmdOrCtrl+S").enabled(false))
-                .add_item(CustomMenuItem::new("save_as", "Save As...").accelerator("CmdOrCtrl+Shift+S"))
-                .add_separator()
-                .add_item(CustomMenuItem::new("import", "Import..."))
-                .add_item(CustomMenuItem::new("export", "Export..."))
-                .add_separator()
-                .add_item(CustomMenuItem::new("print", "Print...").accelerator("CmdOrCtrl+P"))
-                .add_separator()
-                .add_item(CustomMenuItem::new("quit", "Quit").accelerator("CmdOrCtrl+Q")),
-        ))
-        .add_submenu(Submenu::new(
-            "Edit",
-            Menu::new()
-                .add_item(CustomMenuItem::new("undo", "Undo").accelerator("CmdOrCtrl+Z"))
-                .add_item(CustomMenuItem::new("redo", "Redo").accelerator("CmdOrCtrl+Shift+Z"))
-                .add_separator()
-                .add_item(CustomMenuItem::new("cut", "Cut").accelerator("CmdOrCtrl+X"))
-                .add_item(CustomMenuItem::new("copy", "Copy").accelerator("CmdOrCtrl+C"))
-                .add_item(CustomMenuItem::new("paste", "Paste").accelerator("CmdOrCtrl+V"))
-                .add_item(CustomMenuItem::new("select_all", "Select All").accelerator("CmdOrCtrl+A"))
-                .add_separator()
-                .add_item(CustomMenuItem::new("find", "Find").accelerator("CmdOrCtrl+F"))
-                .add_item(CustomMenuItem::new("replace", "Replace").accelerator("CmdOrCtrl+H")),
-        ))
-        .add_submenu(Submenu::new(
-            "View",
-            Menu::new()
-                .add_item(CustomMenuItem::new("toggle_sidebar", "Toggle Sidebar").accelerator("CmdOrCtrl+B"))
-                .add_item(CustomMenuItem::new("toggle_preview", "Toggle Preview").accelerator("CmdOrCtrl+E"))
-                .add_separator()
-                .add_item(CustomMenuItem::new("zoom_in", "Zoom In").accelerator("CmdOrCtrl+Plus"))
-                .add_item(CustomMenuItem::new("zoom_out", "Zoom Out").accelerator("CmdOrCtrl+-"))
-                .add_item(CustomMenuItem::new("reset_zoom", "Reset Zoom").accelerator("CmdOrCtrl+0"))
-                .add_separator()
-                .add_item(CustomMenuItem::new("toggle_fullscreen", "Toggle Fullscreen").accelerator("F11")),
-        ))
-        .add_submenu(Submenu::new(
-            "Notes",
-            Menu::new()
-                .add_item(CustomMenuItem::new("pin_note", "Pin/Unpin Note").accelerator("CmdOrCtrl+P"))
-                .add_item(CustomMenuItem::new("archive_note", "Archive/Unarchive Note").accelerator("CmdOrCtrl+Shift+A"))
-                .add_item(CustomMenuItem::new("delete_note", "Delete Note").accelerator("Delete"))
-                .add_separator()
-                .add_item(CustomMenuItem::new("add_tag", "Add Tag...").accelerator("CmdOrCtrl+T"))
-                .add_item(CustomMenuItem::new("add_attachment", "Add Attachment...").accelerator("CmdOrCtrl+Shift+A")),
-        ))
-        .add_submenu(Submenu::new(
-            "Help",
-            Menu::new()
-                .add_item(CustomMenuItem::new("about", "About Recall Notes"))
-                .add_item(CustomMenuItem::new("documentation", "Documentation"))
-                .add_item(CustomMenuItem::new("check_updates", "Check for Updates"))
-                .add_separator()
-                .add_item(CustomMenuItem::new("report_issue", "Report Issue")),
-        ))
+pub fn build_menu<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<Menu<R>> {
+    let file_menu = Submenu::with_items(
+        app,
+        "File",
+        true,
+        &[
+            &MenuItem::with_id(app, "new_note", "New Note", true, Some("CmdOrCtrl+N"))?,
+            &MenuItem::with_id(
+                app,
+                "new_folder",
+                "New Folder",
+                true,
+                Some("CmdOrCtrl+Shift+N"),
+            )?,
+            &PredefinedMenuItem::separator(app)?,
+            &MenuItem::with_id(app, "save", "Save", false, Some("CmdOrCtrl+S"))?,
+            &MenuItem::with_id(
+                app,
+                "save_as",
+                "Save As...",
+                true,
+                Some("CmdOrCtrl+Shift+S"),
+            )?,
+            &PredefinedMenuItem::separator(app)?,
+            &MenuItem::with_id(app, "import", "Import...", true, None::<&str>)?,
+            &MenuItem::with_id(app, "export", "Export...", true, None::<&str>)?,
+            &PredefinedMenuItem::separator(app)?,
+            &MenuItem::with_id(app, "print", "Print...", true, Some("CmdOrCtrl+P"))?,
+            &PredefinedMenuItem::separator(app)?,
+            &MenuItem::with_id(app, "quit", "Quit", true, Some("CmdOrCtrl+Q"))?,
+        ],
+    )?;
+
+    let edit_menu = Submenu::with_items(
+        app,
+        "Edit",
+        true,
+        &[
+            &MenuItem::with_id(app, "undo", "Undo", true, Some("CmdOrCtrl+Z"))?,
+            &MenuItem::with_id(app, "redo", "Redo", true, Some("CmdOrCtrl+Shift+Z"))?,
+            &PredefinedMenuItem::separator(app)?,
+            &MenuItem::with_id(app, "cut", "Cut", true, Some("CmdOrCtrl+X"))?,
+            &MenuItem::with_id(app, "copy", "Copy", true, Some("CmdOrCtrl+C"))?,
+            &MenuItem::with_id(app, "paste", "Paste", true, Some("CmdOrCtrl+V"))?,
+            &MenuItem::with_id(app, "select_all", "Select All", true, Some("CmdOrCtrl+A"))?,
+            &PredefinedMenuItem::separator(app)?,
+            &MenuItem::with_id(app, "find", "Find", true, Some("CmdOrCtrl+F"))?,
+            &MenuItem::with_id(app, "replace", "Replace", true, Some("CmdOrCtrl+H"))?,
+        ],
+    )?;
+
+    let view_menu = Submenu::with_items(
+        app,
+        "View",
+        true,
+        &[
+            &MenuItem::with_id(
+                app,
+                "toggle_sidebar",
+                "Toggle Sidebar",
+                true,
+                Some("CmdOrCtrl+B"),
+            )?,
+            &MenuItem::with_id(
+                app,
+                "toggle_preview",
+                "Toggle Preview",
+                true,
+                Some("CmdOrCtrl+E"),
+            )?,
+            &PredefinedMenuItem::separator(app)?,
+            &MenuItem::with_id(app, "zoom_in", "Zoom In", true, Some("CmdOrCtrl+Plus"))?,
+            &MenuItem::with_id(app, "zoom_out", "Zoom Out", true, Some("CmdOrCtrl+-"))?,
+            &MenuItem::with_id(app, "reset_zoom", "Reset Zoom", true, Some("CmdOrCtrl+0"))?,
+            &PredefinedMenuItem::separator(app)?,
+            &MenuItem::with_id(
+                app,
+                "toggle_fullscreen",
+                "Toggle Fullscreen",
+                true,
+                Some("F11"),
+            )?,
+        ],
+    )?;
+
+    let notes_menu = Submenu::with_items(
+        app,
+        "Notes",
+        true,
+        &[
+            &MenuItem::with_id(app, "pin_note", "Pin/Unpin Note", true, Some("CmdOrCtrl+P"))?,
+            &MenuItem::with_id(
+                app,
+                "archive_note",
+                "Archive/Unarchive Note",
+                true,
+                Some("CmdOrCtrl+Shift+A"),
+            )?,
+            &MenuItem::with_id(app, "delete_note", "Delete Note", true, Some("Delete"))?,
+            &PredefinedMenuItem::separator(app)?,
+            &MenuItem::with_id(app, "add_tag", "Add Tag...", true, Some("CmdOrCtrl+T"))?,
+            &MenuItem::with_id(
+                app,
+                "add_attachment",
+                "Add Attachment...",
+                true,
+                Some("CmdOrCtrl+Shift+A"),
+            )?,
+        ],
+    )?;
+
+    let help_menu = Submenu::with_items(
+        app,
+        "Help",
+        true,
+        &[
+            &MenuItem::with_id(app, "about", "About Recall Notes", true, None::<&str>)?,
+            &MenuItem::with_id(app, "documentation", "Documentation", true, None::<&str>)?,
+            &MenuItem::with_id(
+                app,
+                "check_updates",
+                "Check for Updates",
+                true,
+                None::<&str>,
+            )?,
+            &PredefinedMenuItem::separator(app)?,
+            &MenuItem::with_id(app, "report_issue", "Report Issue", true, None::<&str>)?,
+        ],
+    )?;
+
+    Menu::with_items(
+        app,
+        &[&file_menu, &edit_menu, &view_menu, &notes_menu, &help_menu],
+    )
 }
 
-pub fn handle_menu_event(app: &tauri::AppHandle, event: WindowMenuEvent) {
-    match event.menu_item_id() {
+pub fn handle_menu_event<R: Runtime>(app: &AppHandle<R>, event: MenuEvent) {
+    match event.id.as_ref() {
         "new_note" => {
             println!("New Note command triggered");
-            // Emit event to frontend
-            let _ = app.emit_all("menu:new-note", "");
+            let _ = app.emit("menu:new-note", "");
         }
         "new_folder" => {
             println!("New Folder command triggered");
-            let _ = app.emit_all("menu:new-folder", "");
+            let _ = app.emit("menu:new-folder", "");
         }
         "quit" => {
             println!("Quit command triggered");
@@ -86,7 +158,6 @@ pub fn handle_menu_event(app: &tauri::AppHandle, event: WindowMenuEvent) {
         }
         "about" => {
             println!("About command triggered");
-            // You could open an about window here
         }
         _ => {}
     }

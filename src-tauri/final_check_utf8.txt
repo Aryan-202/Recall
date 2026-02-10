@@ -1,0 +1,187 @@
+﻿cargo :     Checking recall 
+v0.1.0 (D:\projects\recall\s
+rc-tauri)
+At line:1 char:1
++ cargo check > 
+final_check.txt 2>&1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo          
+    : NotSpecified: (    C  
+  hecking re...call\src-t   
+ auri):String) [], Remot    
+eException
+    + FullyQualifiedErrorId 
+    : NativeCommandError
+ 
+warning: unused import: 
+`Manager`
+ --> src\commands\attachment
+s.rs:4:20
+  |
+4 | use tauri::{State, 
+Manager};
+  |                    
+^^^^^^^
+  |
+  = note: 
+`#[warn(unused_imports)]` 
+(part of `#[warn(unused)]`) 
+on by default
+
+warning: unused import: 
+`AppError`
+ --> src\database\repository
+\notes_repository.rs:2:27
+  |
+2 | use crate::utils::error:
+:{AppError, Result};
+  |                         
+  ^^^^^^^^
+
+warning: unused import: 
+`AppError`
+ --> src\database\repository
+\tags_repository.rs:3:27
+  |
+3 | use crate::utils::error:
+:{AppError, Result};
+  |                         
+  ^^^^^^^^
+
+warning: unused import: 
+`AppError`
+ --> src\database\repository
+\users_repository.rs:2:27
+  |
+2 | use crate::utils::error:
+:{AppError, Result};
+  |                         
+  ^^^^^^^^
+
+warning: unused import: 
+`AppError`
+ --> src\database\repository
+\attachments_repository.rs:2
+:27
+  |
+2 | use crate::utils::error:
+:{AppError, Result};
+  |                         
+  ^^^^^^^^
+
+warning: unused import: 
+`std::fmt`
+ --> src\utils\error.rs:2:5
+  |
+2 | use std::fmt;
+  |     ^^^^^^^^
+
+warning: unused import: 
+`TimeZone`
+ --> 
+src\utils\helpers.rs:1:29
+  |
+1 | use chrono::{DateTime, 
+Utc, TimeZone, Local};
+  |                         
+    ^^^^^^^^
+
+error[E0277]: the trait 
+bound `MenuItemKind<R>: From
+<tauri::menu::Submenu<R>>` 
+is not satisfied
+  --> 
+src\menu\builder.rs:38:35
+   |
+38 |         self.items.push
+(file_menu.into());
+   |                        
+           ^^^^ the trait `F
+rom<tauri::menu::Submenu<R>>
+` is not implemented for 
+`MenuItemKind<R>`
+   |
+   = note: required for 
+`tauri::menu::Submenu<R>` 
+to implement 
+`Into<MenuItemKind<R>>`
+
+error[E0277]: the trait 
+bound `MenuItemKind<R>: From
+<tauri::menu::Submenu<R>>` 
+is not satisfied
+  --> 
+src\menu\builder.rs:64:35
+   |
+64 |         self.items.push
+(edit_menu.into());
+   |                        
+           ^^^^ the trait `F
+rom<tauri::menu::Submenu<R>>
+` is not implemented for 
+`MenuItemKind<R>`
+   |
+   = note: required for 
+`tauri::menu::Submenu<R>` 
+to implement 
+`Into<MenuItemKind<R>>`
+
+error[E0277]: the trait 
+bound `MenuItemKind<R>: From
+<tauri::menu::Submenu<R>>` 
+is not satisfied
+  --> 
+src\menu\builder.rs:94:36
+   |
+94 |         self.items.push
+(notes_menu.into());
+   |                        
+            ^^^^ the trait `
+From<tauri::menu::Submenu<R>
+>` is not implemented for 
+`MenuItemKind<R>`
+   |
+   = note: required for 
+`tauri::menu::Submenu<R>` 
+to implement 
+`Into<MenuItemKind<R>>`
+
+warning: unused variable: 
+`user_id`
+   --> 
+src\commands\notes.rs:130:9
+    |
+130 |     let user_id = 1; 
+// TODO: Get from auth
+    |         ^^^^^^^ help: 
+if this is intentional, 
+prefix it with an 
+underscore: `_user_id`
+    |
+    = note: 
+`#[warn(unused_variables)]` 
+(part of `#[warn(unused)]`) 
+on by default
+
+warning: unused variable: 
+`user_id`
+   --> 
+src\commands\notes.rs:154:9
+    |
+154 |     let user_id = 1; 
+// TODO: Get from auth
+    |         ^^^^^^^ help: 
+if this is intentional, 
+prefix it with an 
+underscore: `_user_id`
+
+For more information about 
+this error, try `rustc 
+--explain E0277`.
+warning: `recall` (lib) 
+generated 9 warnings
+error: could not compile 
+`recall` (lib) due to 3 
+previous errors; 9 warnings 
+emitted

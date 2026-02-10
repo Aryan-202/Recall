@@ -1,6 +1,5 @@
-use crate::database::repository::tags_repository::{
-    TagRepository, TagWithNotes, CreateTagDto, UpdateTagDto
-};
+use crate::database::models::tag::TagWithNotes;
+use crate::database::repository::tags_repository::{CreateTagDto, TagRepository, UpdateTagDto};
 use crate::utils::error::{AppError, Result};
 use serde::{Deserialize, Serialize};
 use tauri::State;
@@ -28,25 +27,22 @@ pub async fn create_tag(
         name: request.name,
         color: request.color,
     };
-    
+
     let tag = repository.create_tag(dto).await?;
     Ok(tag)
 }
 
 #[tauri::command]
-pub async fn get_tag(
-    tag_id: i32,
-    repository: State<'_, TagRepository>,
-) -> Result<TagWithNotes> {
-    let tag = repository.get_tag_by_id(tag_id).await?
+pub async fn get_tag(tag_id: i32, repository: State<'_, TagRepository>) -> Result<TagWithNotes> {
+    let tag = repository
+        .get_tag_by_id(tag_id)
+        .await?
         .ok_or_else(|| AppError::NotFound("Tag not found".to_string()))?;
     Ok(tag)
 }
 
 #[tauri::command]
-pub async fn get_all_tags(
-    repository: State<'_, TagRepository>,
-) -> Result<Vec<TagWithNotes>> {
+pub async fn get_all_tags(repository: State<'_, TagRepository>) -> Result<Vec<TagWithNotes>> {
     let user_id = 1; // TODO: Get from auth
     let tags = repository.get_user_tags(user_id).await?;
     Ok(tags)
@@ -62,16 +58,13 @@ pub async fn update_tag(
         name: request.name,
         color: request.color,
     };
-    
+
     let tag = repository.update_tag(dto).await?;
     Ok(tag)
 }
 
 #[tauri::command]
-pub async fn delete_tag(
-    tag_id: i32,
-    repository: State<'_, TagRepository>,
-) -> Result<bool> {
+pub async fn delete_tag(tag_id: i32, repository: State<'_, TagRepository>) -> Result<bool> {
     let user_id = 1; // TODO: Get from auth
     repository.delete_tag(tag_id, user_id).await?;
     Ok(true)

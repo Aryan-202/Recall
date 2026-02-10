@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::Path;
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AppSettings {
     pub theme: String,
@@ -40,9 +41,10 @@ impl Default for AppSettings {
 }
 
 impl AppSettings {
+    #[allow(dead_code)]
     pub fn load() -> Self {
         let settings_path = Self::get_settings_path();
-        
+
         if let Ok(content) = fs::read_to_string(&settings_path) {
             serde_json::from_str(&content).unwrap_or_default()
         } else {
@@ -51,26 +53,27 @@ impl AppSettings {
             default_settings
         }
     }
-    
+
+    #[allow(dead_code)]
     pub fn save(&self) -> Result<(), Box<dyn std::error::Error>> {
         let settings_path = Self::get_settings_path();
         let settings_dir = Path::new(&settings_path).parent().unwrap();
-        
+
         // Create directory if it doesn't exist
         fs::create_dir_all(settings_dir)?;
-        
+
         let content = serde_json::to_string_pretty(self)?;
         fs::write(settings_path, content)?;
-        
+
         Ok(())
     }
-    
+
+    #[allow(dead_code)]
     fn get_settings_path() -> String {
         if cfg!(debug_assertions) {
             "./settings.json".to_string()
         } else {
-            let home_dir = dirs::config_dir()
-                .unwrap_or_else(|| std::path::PathBuf::from("."));
+            let home_dir = dirs::config_dir().unwrap_or_else(|| std::path::PathBuf::from("."));
             let app_dir = home_dir.join("Recall Notes");
             app_dir.join("settings.json").to_string_lossy().to_string()
         }
