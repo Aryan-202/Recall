@@ -1,14 +1,30 @@
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
+pub mod commands;
+pub mod database;
+pub mod utils;
+pub mod config;
+pub mod menu;
+
+// Re-exports for easier access
+pub use commands::*;
+pub use database::*;
+pub use utils::*;
+pub use config::*;
+
+// Application state
+use sqlx::PgPool;
+use std::sync::Arc;
+
+pub struct AppState {
+    pub db_pool: Arc<PgPool>,
 }
 
-#[cfg_attr(mobile, tauri::mobile_entry_point)]
-pub fn run() {
-    tauri::Builder::default()
-        .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![greet])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+impl AppState {
+    pub async fn new() -> Result<Self, Box<dyn std::error::Error>> {
+        let database_url = config::get_database_url();
+        let pool = PgPool::connect(&database_url).await?;
+        
+        Ok(AppState {
+            db_pool: Arc::new(pool),
+        })
+    }
 }

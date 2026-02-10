@@ -1,0 +1,90 @@
+use crate::database::repository::attachments_repository::AttachmentRepository;
+use crate::utils::error::{AppError, Result};
+use serde::{Deserialize, Serialize};
+use tauri::{State, Manager};
+use std::path::PathBuf;
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct AttachmentInfo {
+    pub attachment_id: i32,
+    pub note_id: i32,
+    pub file_name: String,
+    pub file_path: String,
+    pub file_size: i64,
+    pub mime_type: String,
+    pub uploaded_at: chrono::DateTime<chrono::Utc>,
+}
+
+#[tauri::command]
+pub async fn upload_attachment(
+    note_id: i32,
+    file_path: String,
+    repository: State<'_, AttachmentRepository>,
+) -> Result<AttachmentInfo> {
+    let path = PathBuf::from(&file_path);
+    
+    if !path.exists() {
+        return Err(AppError::NotFound("File not found".to_string()));
+    }
+    
+    let file_name = path.file_name()
+        .ok_or_else(|| AppError::InvalidInput("Invalid file path".to_string()))?
+        .to_string_lossy()
+        .to_string();
+    
+    let file_size = std::fs::metadata(&path)
+        .map_err(|_| AppError::InvalidInput("Cannot read file metadata".to_string()))?
+        .len() as i64;
+    
+    // Get MIME type
+    let mime_type = mime_guess::from_path(&path)
+        .first_or_octet_stream()
+        .to_string();
+    
+    // In a real app, you'd copy the file to a secure location
+    // For now, we'll just store the path
+    let attachment = repository.create_attachment(
+        note_id,
+        &file_name,
+        &file_path,
+        file_size,
+        &mime_type,
+    ).await?;
+    
+    Ok(AttachmentInfo {
+        attachment_id: attachment.attachment_id,
+        note_id: attachment.note_id,
+        file_name: attachment.file_name,
+        file_path: attachment.file_path,
+        file_size: attachment.file_size,
+        mime_type: attachment.mime_type,
+        uploaded_at: attachment.uploaded_at,
+    })
+}
+
+#[tauri::command]
+pub async fn delete_attachment(
+    attachment_id: i32,
+    repository: State<'_, AttachmentRepository>,
+) -> Result<bool> {
+    repository.delete_attachment(attachment_id).await?;
+    Ok(true)
+}
+
+#[tauri::command]
+pub async fn get_note_attachments(
+    note_id: i32,
+    repository: State<'_, AttachmentRepository>,
+) -> Result<Vec<AttachmentInfo>> {
+    let attachments = repository.get_note_attachments(note_id).await?;
+    
+    Ok(attachments.into_iter().map(|a| AttachmentInfo {
+        attachment_id: a.attachment_id,
+        note_id: a.note_id,
+        file_name: a.file_name,
+        file_path: a.file_path,
+        file_size: a.file_size,
+        mime_type: a.mime_type,
+        uploaded_at: a.uploaded_at,
+    }).collect())
+}
