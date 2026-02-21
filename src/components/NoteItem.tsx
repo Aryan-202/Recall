@@ -6,9 +6,11 @@ import './NoteItem.css';
 
 const NoteItem: React.FC<NoteItemProps> = ({ note, isActive, onClick }) => {
     const getDisplayDate = () => {
-        if (typeof note.date_time === 'string') return note.date_time;
-        const ms = parseInt(note.date_time.$date.$numberLong);
-        return format(new Date(ms), 'MMM d, yyyy');
+        try {
+            return format(new Date(note.created_at), 'MMM d, yyyy');
+        } catch (e) {
+            return 'Recent';
+        }
     };
 
     return (

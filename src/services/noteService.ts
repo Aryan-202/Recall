@@ -2,35 +2,46 @@ import { invoke } from "@tauri-apps/api/core";
 import { Note } from "../types";
 
 export const noteService = {
-    async saveNote(title: string, body: string): Promise<number[]> {
+    async getNotes(user_id: string): Promise<Note[]> {
         try {
-            const bytes = await invoke<number[]>("save_note", { title, body });
-            return bytes;
+            const notes = await invoke<Note[]>("get_notes", { userId: user_id });
+            return notes;
         } catch (error) {
-            console.error("Failed to save note:", error);
-            throw error;
-        }
-    },
-
-    async loadNotes(bytesArrayJson: string): Promise<Note[]> {
-        try {
-            const result = await invoke<string>("load_notes", { data: bytesArrayJson });
-            if (result === "no data") return [];
-            if (result.startsWith("error:")) throw new Error(result);
-            return JSON.parse(result);
-        } catch (error) {
-            console.error("Failed to load notes:", error);
+            console.error("Failed to fetch notes:", error);
             return [];
         }
     },
 
-    async editNote(notes: Note[]): Promise<number[]> {
+    async createNote(user_id: string, title: string, content: string): Promise<Note> {
         try {
-            const data = JSON.stringify(notes);
-            const bytes = await invoke<number[]>("edit_note", { data });
-            return bytes;
+            const note = await invoke<Note>("create_note", {
+                userId: user_id,
+                req: { title, content }
+            });
+            return note;
         } catch (error) {
-            console.error("Failed to edit note:", error);
+            console.error("Failed to create note:", error);
+            throw error;
+        }
+    },
+
+    async updateNote(note_id: string, title?: string, content?: string): Promise<void> {
+        try {
+            await invoke("update_note", {
+                noteId: note_id,
+                req: { title, content }
+            });
+        } catch (error) {
+            console.error("Failed to update note:", error);
+            throw error;
+        }
+    },
+
+    async deleteNote(note_id: string): Promise<void> {
+        try {
+            await invoke("delete_note", { noteId: note_id });
+        } catch (error) {
+            console.error("Failed to delete note:", error);
             throw error;
         }
     }

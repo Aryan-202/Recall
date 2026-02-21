@@ -5,21 +5,21 @@ import './Editor.css';
 
 interface EditorProps {
     note: Note;
-    onUpdate: (title: string, body: string) => void;
+    onUpdate: (title: string, content: string) => void;
     onDelete: (id: string) => void;
 }
 
 const Editor: React.FC<EditorProps> = ({ note, onUpdate, onDelete }) => {
     const [title, setTitle] = useState(note.title);
-    const [body, setBody] = useState(note.body);
+    const [content, setContent] = useState(note.content);
 
     useEffect(() => {
         setTitle(note.title);
-        setBody(note.body);
-    }, [note.bson_uuid, note.title, note.body]);
+        setContent(note.content);
+    }, [note.id, note.title, note.content]);
 
     const handleSave = () => {
-        onUpdate(title, body);
+        onUpdate(title, content);
     };
 
     return (
@@ -35,7 +35,7 @@ const Editor: React.FC<EditorProps> = ({ note, onUpdate, onDelete }) => {
                     <button className="icon-btn" title="Share">
                         <Share2 size={18} />
                     </button>
-                    <button className="icon-btn danger" onClick={() => onDelete(note.bson_uuid)} title="Delete">
+                    <button className="icon-btn danger" onClick={() => onDelete(note.id)} title="Delete">
                         <Trash2 size={18} />
                     </button>
                     <button className="save-btn" onClick={handleSave}>
@@ -56,8 +56,8 @@ const Editor: React.FC<EditorProps> = ({ note, onUpdate, onDelete }) => {
                 <textarea
                     className="editor-body-textarea"
                     placeholder="Start writing..."
-                    value={body}
-                    onChange={(e) => setBody(e.target.value)}
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
                 />
             </div>
         </main>

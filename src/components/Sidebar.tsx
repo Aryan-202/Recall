@@ -51,10 +51,10 @@ const Sidebar: React.FC<SidebarProps> = ({
                 ) : (
                     notes.map(note => (
                         <NoteItem
-                            key={note.bson_uuid}
+                            key={note.id}
                             note={note}
-                            isActive={activeNoteId === note.bson_uuid}
-                            onClick={() => onNoteSelect(note.bson_uuid)}
+                            isActive={activeNoteId === note.id}
+                            onClick={() => onNoteSelect(note.id)}
                         />
                     ))
                 )}

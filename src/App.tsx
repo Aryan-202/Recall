@@ -1,11 +1,16 @@
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Sidebar from './components/Sidebar';
 import Editor from './components/Editor';
 import EmptyState from './components/EmptyState';
+import Login from './components/Login';
 import { useNotes } from './hooks/useNotes';
+import { User } from './types';
 import './App.css';
 
 function App() {
+  const [user, setUser] = useState<User | null>(null);
+
   const {
     notes,
     activeNote,
@@ -17,7 +22,20 @@ function App() {
     handleUpdateNote,
     handleDeleteNote,
     loading
-  } = useNotes();
+  } = useNotes(user);
+
+  const handleLogin = (email: string) => {
+    // Mock user for now
+    setUser({
+      id: 'mock-uuid-123',
+      email: email,
+      created_at: new Date().toISOString()
+    });
+  };
+
+  if (!user) {
+    return <Login onLogin={handleLogin} />;
+  }
 
   if (loading) {
     return (
@@ -48,7 +66,7 @@ function App() {
         <AnimatePresence mode="wait">
           {activeNote ? (
             <motion.div
-              key={activeNote.bson_uuid}
+              key={activeNote.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
@@ -57,7 +75,7 @@ function App() {
             >
               <Editor
                 note={activeNote}
-                onUpdate={(title, body) => handleUpdateNote(activeNote.bson_uuid, title, body)}
+                onUpdate={(title, content) => handleUpdateNote(activeNote.id, title, content)}
                 onDelete={handleDeleteNote}
               />
             </motion.div>

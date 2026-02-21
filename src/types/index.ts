@@ -1,8 +1,16 @@
 export interface Note {
-    bson_uuid: string;
-    date_time: { $date: { $numberLong: string } } | string;
+    id: string;
+    user_id: string;
     title: string;
-    body: string;
+    content: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface User {
+    id: string;
+    email: string;
+    created_at: string;
 }
 
 export interface NoteItemProps {
@@ -10,3 +18,4 @@ export interface NoteItemProps {
     isActive: boolean;
     onClick: () => void;
 }
+
