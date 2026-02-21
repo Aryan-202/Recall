@@ -1,50 +1,80 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
-import "./App.css";
+import { motion, AnimatePresence } from 'framer-motion';
+import Sidebar from './components/Sidebar';
+import Editor from './components/Editor';
+import EmptyState from './components/EmptyState';
+import { useNotes } from './hooks/useNotes';
+import './App.css';
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+  const {
+    notes,
+    activeNote,
+    activeNoteId,
+    setActiveNoteId,
+    searchQuery,
+    setSearchQuery,
+    handleNewNote,
+    handleUpdateNote,
+    handleDeleteNote,
+    loading
+  } = useNotes();
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
+  if (loading) {
+    return (
+      <div className="loading-screen">
+        <motion.div
+          animate={{ scale: [1, 1.2, 1] }}
+          transition={{ repeat: Infinity, duration: 1.5 }}
+          className="loading-logo"
+        >
+          Recall
+        </motion.div>
+      </div>
+    );
   }
 
   return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
+    <div className="app-container">
+      <Sidebar
+        notes={notes}
+        activeNoteId={activeNoteId}
+        onNoteSelect={setActiveNoteId}
+        onNewNote={handleNewNote}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+      />
 
-      <div className="row">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div className="main-viewport">
+        <AnimatePresence mode="wait">
+          {activeNote ? (
+            <motion.div
+              key={activeNote.bson_uuid}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              style={{ height: '100%', width: '100%' }}
+            >
+              <Editor
+                note={activeNote}
+                onUpdate={(title, body) => handleUpdateNote(activeNote.bson_uuid, title, body)}
+                onDelete={handleDeleteNote}
+              />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="empty"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              style={{ height: '100%', width: '100%' }}
+            >
+              <EmptyState onNewNote={handleNewNote} />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
-    </main>
+    </div>
   );
 }
 
