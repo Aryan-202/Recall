@@ -139,15 +139,23 @@
   color: var(--text-muted);
 }
 
-.login-footer a {
+.login-footer a, .toggle-auth-btn {
   color: var(--accent);
   font-weight: 500;
   text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: 5px;
+  cursor: pointer;
+  font-size: inherit;
+  font-family: inherit;
 }
 
-.login-footer a:hover {
+.login-footer a:hover, .toggle-auth-btn:hover {
   text-decoration: underline;
 }
+
 
 /* Background decorations */
 .login-background {

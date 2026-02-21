@@ -22,11 +22,14 @@ pub fn run() {
             crate::commands::operations::save_note,
             crate::commands::operations::edit_note,
             crate::commands::operations::load_notes,
-            // NEW Supabase commands
+            // Supabase notes commands
             crate::commands::supabase::get_notes,
             crate::commands::supabase::create_note,
             crate::commands::supabase::update_note,
             crate::commands::supabase::delete_note,
+            // Auth commands
+            crate::commands::auth::login,
+            crate::commands::auth::signup,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -24,13 +24,8 @@ function App() {
     loading
   } = useNotes(user);
 
-  const handleLogin = (email: string) => {
-    // Mock user for now
-    setUser({
-      id: 'mock-uuid-123',
-      email: email,
-      created_at: new Date().toISOString()
-    });
+  const handleLogin = (user: User) => {
+    setUser(user);
   };
 
   if (!user) {

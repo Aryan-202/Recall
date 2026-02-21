@@ -1,4 +1,4 @@
-use crate::db::models::Note;
+use crate::db::models::{AuthResponse, Note};
 use dotenv::dotenv;
 use reqwest::{header, Client};
 use serde_json::json;
@@ -35,6 +35,50 @@ impl SupabaseClient {
         })
     }
 
+    // Auth operations
+    pub async fn signup(
+        &self,
+        email: &str,
+        password: &str,
+    ) -> Result<AuthResponse, Box<dyn std::error::Error>> {
+        let url = format!("{}/auth/v1/signup", self.base_url);
+        let body = json!({
+            "email": email,
+            "password": password,
+        });
+
+        let response = self.client.post(&url).json(&body).send().await?;
+        if !response.status().is_success() {
+            let error_text = response.text().await?;
+            return Err(format!("Signup failed: {}", error_text).into());
+        }
+
+        let auth_res: AuthResponse = response.json().await?;
+        Ok(auth_res)
+    }
+
+    pub async fn login(
+        &self,
+        email: &str,
+        password: &str,
+    ) -> Result<AuthResponse, Box<dyn std::error::Error>> {
+        let url = format!("{}/auth/v1/token?grant_type=password", self.base_url);
+        let body = json!({
+            "email": email,
+            "password": password,
+        });
+
+        let response = self.client.post(&url).json(&body).send().await?;
+        if !response.status().is_success() {
+            let error_text = response.text().await?;
+            return Err(format!("Login failed: {}", error_text).into());
+        }
+
+        let auth_res: AuthResponse = response.json().await?;
+        Ok(auth_res)
+    }
+
+    // Notes operations
     pub async fn get_notes(&self, user_id: &str) -> Result<Vec<Note>, Box<dyn std::error::Error>> {
         let url = format!(
             "{}/rest/v1/notes?user_id=eq.{}&order=created_at.desc",

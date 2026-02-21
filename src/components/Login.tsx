@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import { Mail, Lock, Layers, ArrowRight, Loader2 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Mail, Lock, Layers, Loader2, UserPlus, LogIn } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { authService } from '../services/authService';
+import { User } from '../types';
 import './Login.css';
 
 interface LoginProps {
-    onLogin: (email: string) => void;
+    onLogin: (user: User) => void;
 }
 
 const Login: React.FC<LoginProps> = ({ onLogin }) => {
+    const [isLogin, setIsLogin] = useState(true);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -18,36 +21,49 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         setIsLoading(true);
         setError(null);
 
-        // Mock login since we don't have the auth command yet
-        // In a real app, this would call a Tauri command like `invoke("login", { email, password })`
-        setTimeout(() => {
-            if (email && password) {
-                onLogin(email);
+        try {
+            let user: User;
+            if (isLogin) {
+                user = await authService.login(email, password);
             } else {
-                setError('Please enter both email and password');
-                setIsLoading(false);
+                user = await authService.signup(email, password);
             }
-        }, 1500);
+            onLogin(user);
+        } catch (err: any) {
+            setError(err.toString().replace('Login failed: ', '').replace('Signup failed: ', ''));
+            setIsLoading(false);
+        }
     };
 
     return (
         <div className="login-page">
             <motion.div
                 className="login-card"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4 }}
             >
                 <div className="login-header">
                     <div className="login-logo">
-                        <Layers size={32} className="accent-color" />
+                        <Layers size={40} className="accent-color" />
                     </div>
-                    <h1>Welcome Back</h1>
-                    <p>Sign in to your Recall account</p>
+                    <h1>{isLogin ? 'Welcome Back' : 'Create Account'}</h1>
+                    <p>{isLogin ? 'Sign in to access your notes' : 'Join Recall and start writing'}</p>
                 </div>
 
                 <form className="login-form" onSubmit={handleSubmit}>
-                    {error && <div className="login-error">{error}</div>}
+                    <AnimatePresence mode="wait">
+                        {error && (
+                            <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                exit={{ opacity: 0, height: 0 }}
+                                className="login-error"
+                            >
+                                {error}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
                     <div className="input-field">
                         <label htmlFor="email">Email Address</label>
@@ -84,15 +100,24 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                             <Loader2 size={18} className="animate-spin" />
                         ) : (
                             <>
-                                <span>Sign In</span>
-                                <ArrowRight size={18} />
+                                <span>{isLogin ? 'Sign In' : 'Sign Up'}</span>
+                                {isLogin ? <LogIn size={18} /> : <UserPlus size={18} />}
                             </>
                         )}
                     </button>
                 </form>
 
                 <div className="login-footer">
-                    <p>Don't have an account? <a href="#">Create one</a></p>
+                    <p>
+                        {isLogin ? "Don't have an account?" : "Already have an account?"}
+                        <button
+                            className="toggle-auth-btn"
+                            onClick={() => setIsLogin(!isLogin)}
+                            type="button"
+                        >
+                            {isLogin ? 'Create one' : 'Sign in'}
+                        </button>
+                    </p>
                 </div>
             </motion.div>
 
